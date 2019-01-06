@@ -1,6 +1,6 @@
-name := "sbt-multi-project-example"
+name := "poc"
 organization in ThisBuild := "com.pbassiner"
-scalaVersion in ThisBuild := "2.12.3"
+scalaVersion in ThisBuild := "2.12.8"
 
 // PROJECTS
 
@@ -8,46 +8,18 @@ lazy val global = project
   .in(file("."))
   .settings(settings)
   .aggregate(
-    common,
-    multi1,
-    multi2
+    api,
+    parents,
+    implementations,
   )
 
-lazy val common = project
-  .settings(
-    name := "common",
-    settings,
-    libraryDependencies ++= commonDependencies
-  )
+lazy val parents = project in file("parents")
 
-lazy val multi1 = project
-  .settings(
-    name := "multi1",
-    settings,
-    assemblySettings,
-    libraryDependencies ++= commonDependencies ++ Seq(
-      dependencies.monocleCore,
-      dependencies.monocleMacro
-    )
-  )
-  .dependsOn(
-    common
-  )
+lazy val implementations = (project in file("implementations")).dependsOn(parents)
 
-lazy val multi2 = project
-  .settings(
-    name := "multi2",
-    settings,
-    assemblySettings,
-    libraryDependencies ++= commonDependencies ++ Seq(
-      dependencies.pureconfig
-    )
-  )
-  .dependsOn(
-    common
-  )
-
-// DEPENDENCIES
+lazy val api = (project in file("API"))
+  .settings(commonSettings)
+  .dependsOn(parents,implementations)
 
 lazy val dependencies =
   new {
@@ -90,8 +62,8 @@ lazy val commonDependencies = Seq(
 
 lazy val settings =
 commonSettings ++
-wartremoverSettings ++
-scalafmtSettings
+wartremoverSettings 
+//scalafmtSettings
 
 lazy val compilerOptions = Seq(
   "-unchecked",
@@ -118,12 +90,7 @@ lazy val wartremoverSettings = Seq(
   wartremoverWarnings in (Compile, compile) ++= Warts.allBut(Wart.Throw)
 )
 
-lazy val scalafmtSettings =
-  Seq(
-    scalafmtOnCompile := true,
-    scalafmtTestOnCompile := true,
-    scalafmtVersion := "1.2.0"
-  )
+
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",
