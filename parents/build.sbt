@@ -1,6 +1,6 @@
 name := "parents"
 
-version := "1.0"
+version := "1.0.0"
 
 lazy val `parents` = project in file(".")
 
@@ -10,5 +10,4 @@ lazy val `parents` = project in file(".")
 
 scalaVersion := "2.12.8"
 
-
-organization := "poc-parents"
+organization := "poc.parents"

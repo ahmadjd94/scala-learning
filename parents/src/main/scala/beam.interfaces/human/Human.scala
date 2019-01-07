@@ -1,7 +1,5 @@
 
-package Human{
-  class Human
-}
+package human
 
 abstract class Human{
   def computeAge(): Int

@@ -1,25 +1,38 @@
-name := "poc"
-organization in ThisBuild := "com.pbassiner"
-scalaVersion in ThisBuild := "2.12.8"
+ThisBuild / name := "poc"
+ThisBuild / organization := "poc.core"
+ThisBuild / scalaVersion:= "2.12.8"
 
-// PROJECTS
 
-lazy val global = project
-  .in(file("."))
-  .settings(settings)
-  .aggregate(
-    api,
-    parents,
-    implementations,
-  )
+lazy val commonSettings = Seq(
+  target := { baseDirectory.value }
+)
 
+lazy val settings =
+  commonSettings ++
+    assemblySettings
+
+
+//lazy val global = project
+//  .in(file("."))
+//  .settings(settings)
+//  .aggregate(
+//    api,
+//    parents,
+//    implementations,
+//  )
+
+//lazy val lms = (project in file(".")).aggregate(parents,api)
+
+
+//lazy val parents = project in file("parents").settings(commonSettings,assemblySettings)
 lazy val parents = project in file("parents")
 
-lazy val implementations = (project in file("implementations")).dependsOn(parents)
+lazy val implementations = project in file("implementations")
 
 lazy val api = (project in file("API"))
-  .settings(commonSettings)
-  .dependsOn(parents,implementations)
+  .settings(commonSettings,assemblySettings
+  )
+  .dependsOn(parents, implementations)
 
 lazy val dependencies =
   new {
@@ -58,12 +71,6 @@ lazy val commonDependencies = Seq(
   dependencies.scalacheck % "test"
 )
 
-// SETTINGS
-
-lazy val settings =
-commonSettings ++
-wartremoverSettings 
-//scalafmtSettings
 
 lazy val compilerOptions = Seq(
   "-unchecked",
@@ -76,21 +83,6 @@ lazy val compilerOptions = Seq(
   "-encoding",
   "utf8"
 )
-
-lazy val commonSettings = Seq(
-  scalacOptions ++= compilerOptions,
-  resolvers ++= Seq(
-    "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
-    Resolver.sonatypeRepo("releases"),
-    Resolver.sonatypeRepo("snapshots")
-  )
-)
-
-lazy val wartremoverSettings = Seq(
-  wartremoverWarnings in (Compile, compile) ++= Warts.allBut(Wart.Throw)
-)
-
-
 
 lazy val assemblySettings = Seq(
   assemblyJarName in assembly := name.value + ".jar",

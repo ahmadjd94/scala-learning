@@ -1,4 +1,4 @@
-import Student._
+import impls.Student
 
 object Main extends App {
   val obj1 = new Student()
