@@ -12,27 +12,24 @@ lazy val settings =
     assemblySettings
 
 
-//lazy val global = project
-//  .in(file("."))
-//  .settings(settings)
-//  .aggregate(
-//    api,
-//    parents,
-//    implementations,
-//  )
+lazy val global = project
+  .in(file("."))
+  .settings(settings)
+  .aggregate(
+    web,
+    parents,
+    implementations,
+  )
 
-//lazy val lms = (project in file(".")).aggregate(parents,api)
-
-
-//lazy val parents = project in file("parents").settings(commonSettings,assemblySettings)
 lazy val parents = project in file("parents")
 
 lazy val implementations = project in file("implementations")
 
-lazy val api = (project in file("API"))
+lazy val web = (project in file("web"))
   .settings(commonSettings,assemblySettings
   )
-  .dependsOn(parents, implementations)
+  .dependsOn(parents, implementations,guice)
+
 
 lazy val dependencies =
   new {
@@ -58,6 +55,8 @@ lazy val dependencies =
     val pureconfig     = "com.github.pureconfig"      %% "pureconfig"              % pureconfigV
     val scalatest      = "org.scalatest"              %% "scalatest"               % scalatestV
     val scalacheck     = "org.scalacheck"             %% "scalacheck"              % scalacheckV
+    val guice = "com.google.inject" % "guice" % "4.2.2"
+
   }
 
 lazy val commonDependencies = Seq(
@@ -68,7 +67,9 @@ lazy val commonDependencies = Seq(
   dependencies.typesafeConfig,
   dependencies.akka,
   dependencies.scalatest  % "test",
-  dependencies.scalacheck % "test"
+  dependencies.scalacheck % "test",
+  dependencies.guice
+
 )
 
 
