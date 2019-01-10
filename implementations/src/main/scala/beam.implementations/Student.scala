@@ -3,7 +3,7 @@ import human.Human
 
 package impls {
 
-  class Student extends Human {
+  class Student implements Human {
     def test(): Boolean = {
       true
     }
